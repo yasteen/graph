@@ -12,22 +12,29 @@ MatrixGraph<V, E>::MatrixGraph(
         std::vector<std::pair<int, int>> edges
 ) : Graph<V, E>::Graph(vertexData, edgeData) {
     size_t size = vertexData.size();
-    graph = std::vector<std::vector<bool>>(size, std::vector<bool>(size, false));
-    for (auto edge : edges)
-        graph[edge.first][edge.second] = 1;
+    graph = std::vector<std::vector<int>>(size, std::vector<int>(size, -1));
+    for (size_t i = 0; i < edges.size(); i++)
+        graph[edges[i].first][edges[i].second] = i;
 }
 
 template <typename V, typename E>
-std::list<int> MatrixGraph<V, E>::getNeighbours(int node) {
-    std::list<int> neighbours;
+std::list<std::pair<int, int>> MatrixGraph<V, E>::getNeighbours(int node) {
+    std::list<std::pair<int, int>> neighbours;
     for (size_t i = 0; i < graph[node].size(); i++)
-        neighbours.push_back(i);
+        neighbours.push_back(std::pair<int, int>(graph[node][i], i));
     return neighbours;
 }
 
 template <typename V, typename E>
 bool MatrixGraph<V, E>::isNeighbour(int a, int b) {
-    return graph[a][b];
+    return graph[a][b] != -1;
+}
+
+template <typename V, typename E>
+std::optional<E> MatrixGraph<V, E>::getEdge(int a, int b) {
+    for (int i : graph[a])
+        if (i == b) return this->edgeData[i];
+    return NULL;
 }
 
 // ===== List Graph =====
@@ -39,20 +46,30 @@ ListGraph<V, E>::ListGraph(
         std::vector<std::pair<int, int>> edges
 ) : Graph<V, E>::Graph(vertexData, edgeData) {
     size_t size = vertexData.size();
-    graph = std::vector<std::list<int>>(size, std::list<int>());
-    for (auto edge : edges)
-        graph[edge.first].push_back(edge.second);
+    graph = std::vector<std::list<std::pair<int, int>>>(
+            size,
+            std::list<std::pair<int, int>>()
+    );
+    for (size_t i = 0; i < edges.size(); i++)
+        graph[edges[i].first].push_back(std::pair<int, int>(i, edges[i].second));
 }
 
 template <typename V, typename E>
-std::list<int> ListGraph<V, E>::getNeighbours(int node) {
+std::list<std::pair<int, int>> ListGraph<V, E>::getNeighbours(int node) {
     return graph[node];
 }
 
 template <typename V, typename E>
 bool ListGraph<V, E>::isNeighbour(int a, int b) {
-    for (int i : graph[a])
-        if (i == b) return true;
+    for (auto link : graph[a])
+        if (link.second == b) return true;
     return false;
+}
+
+template <typename V, typename E>
+std::optional<E> ListGraph<V, E>::getEdge(int a, int b) {
+    for (auto link : graph[a])
+        if (link.second == b) return this->edgeData[link.first];
+    return NULL;
 }
 

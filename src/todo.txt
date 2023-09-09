@@ -1,0 +1,4 @@
+DFS
+BFS
+Dijkstra
+Bellman-Ford

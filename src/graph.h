@@ -2,53 +2,54 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <optional>
 
 namespace graph {
 
 template <typename V, typename E>
-class Graph {
-public:
+struct Graph {
     Graph(
         std::vector<V> vertexData,
         std::vector<E> edgeData
     ) : vertexData(vertexData), edgeData(edgeData) {}
-    virtual std::list<int> getNeighbours(int node) = 0;
+    virtual std::list<std::pair<int, int>> getNeighbours(int node) = 0;
     virtual bool isNeighbour(int a, int b) = 0;
+    virtual std::optional<E> getEdge(int a, int b) = 0;
 
-protected:
     std::vector<V> vertexData;
     std::vector<E> edgeData;
 };
 
 template <typename V, typename E>
-class MatrixGraph: public Graph<V, E> {
-public:
+struct MatrixGraph: public Graph<V, E> {
     MatrixGraph(
         std::vector<V> vertexData,
         std::vector<E> edgeData,
         std::vector<std::pair<int, int>> edges
     );
-   
-    std::list<int> getNeighbours(int node);
+
+    std::list<std::pair<int, int>> getNeighbours(int node);
     bool isNeighbour(int a, int b);
+    virtual std::optional<E> getEdge(int a, int b);
 protected:
     // Row: origin vertex; Col: dest vertex
-    std::vector<std::vector<bool>> graph;
+    std::vector<std::vector<int>> graph;
 };
 
 template <typename V, typename E>
-class ListGraph: public Graph<V, E> {
-public:
+struct ListGraph: public Graph<V, E> {
     ListGraph(
         std::vector<V> vertexData,
         std::vector<E> edgeData,
         std::vector<std::pair<int, int>> edges
     );
 
-    std::list<int> getNeighbours(int node);
+    std::list<std::pair<int, int>> getNeighbours(int node);
     bool isNeighbour(int a, int b);
+    std::optional<E> getEdge(int a, int b);
 protected:
-    std::vector<std::list<int>> graph;
+    // graph[u] = pair(edge, v)
+    std::vector<std::list<std::pair<int, int>>> graph;
 };
 
 }

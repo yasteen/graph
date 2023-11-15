@@ -1,10 +1,11 @@
 # graph
 Graph representation and algorithms
 
-To compile, cd into `build`, and run
+To compile, cd into the project root, and run
 ```bash
-cmake ..
+cmake .
 make
 ```
 
-The executable file created is `build/main`.
+The demo executable file created is `main`, and the statically linked library
+is `libgraph.a`.

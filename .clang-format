@@ -1,0 +1,14 @@
+---
+# General
+BasedOnStyle: WebKit
+ColumnLimit: 84
+IndentWidth: 4
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+BraceWrapping:
+  AfterFunction: false
+BreakBeforeBraces: Custom
+---

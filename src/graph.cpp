@@ -1,58 +1,77 @@
-#include "graph.h"
+#include "graph.hpp"
+#include "exception.hpp"
 #include <iostream>
 
-using namespace graph;
+namespace graph {
 
-// ===== Matrix Graph =====
+bool graph::is_adjacent(int from, int to) {
+    const vertex& v = adj[from];
+    const std::list<edge>& neighbours = v.neighbours;
 
-template <typename V, typename E>
-MatrixGraph<V, E>::MatrixGraph(
-        std::vector<V> vertexData,
-        std::vector<E> edgeData,
-        std::vector<std::pair<int, int>> edges
-) : Graph<V, E>::Graph(vertexData, edgeData) {
-    size_t size = vertexData.size();
-    graph = std::vector<std::vector<bool>>(size, std::vector<bool>(size, false));
-    for (auto edge : edges)
-        graph[edge.first][edge.second] = 1;
-}
+    for (const edge& edge : neighbours) {
+        if (to == edge.to) {
+            return true;
+        }
+    }
 
-template <typename V, typename E>
-std::list<int> MatrixGraph<V, E>::getNeighbours(int node) {
-    std::list<int> neighbours;
-    for (size_t i = 0; i < graph[node].size(); i++)
-        neighbours.push_back(i);
-    return neighbours;
-}
-
-template <typename V, typename E>
-bool MatrixGraph<V, E>::isNeighbour(int a, int b) {
-    return graph[a][b];
-}
-
-// ===== List Graph =====
-
-template <typename V, typename E>
-ListGraph<V, E>::ListGraph(
-        std::vector<V> vertexData,
-        std::vector<E> edgeData,
-        std::vector<std::pair<int, int>> edges
-) : Graph<V, E>::Graph(vertexData, edgeData) {
-    size_t size = vertexData.size();
-    graph = std::vector<std::list<int>>(size, std::list<int>());
-    for (auto edge : edges)
-        graph[edge.first].push_back(edge.second);
-}
-
-template <typename V, typename E>
-std::list<int> ListGraph<V, E>::getNeighbours(int node) {
-    return graph[node];
-}
-
-template <typename V, typename E>
-bool ListGraph<V, E>::isNeighbour(int a, int b) {
-    for (int i : graph[a])
-        if (i == b) return true;
     return false;
 }
 
+std::list<edge>& graph::neighbours(int v) { return adj[v].neighbours; }
+
+void graph::add_edge(int from, int to, int data) {
+    adj[from].neighbours.push_back(edge(to, data));
+    num_edges++;
+}
+
+void graph::rm_edge(int from, int to) {
+    const std::list<edge>& neighbours = adj[from].neighbours;
+
+    for (const edge& edge : neighbours) {
+        if (to == edge.to) {
+            adj[from].neighbours.remove(edge);
+            num_edges--;
+            return;
+        }
+    }
+
+    throw edge_exception(from, to);
+}
+
+void graph::add_vert(int v, int data) { adj.insert(std::pair(v, vertex(v, data))); }
+
+void graph::rm_vert(int v) {
+    adj.erase(v);
+    for (auto& [key, vertex] : adj) {
+        for (const edge& edge : vertex.neighbours) {
+            if (edge.to == v) {
+                vertex.neighbours.remove(edge);
+                num_edges--;
+            }
+        }
+    }
+}
+
+const vertex& graph::get_vert(int v) { return adj[v]; }
+
+void graph::set_vert(int v, int data) { adj[v].data = data; }
+
+const edge& graph::get_edge(int from, int to) {
+    for (const edge& edge : adj[from].neighbours) {
+        if (edge.to == to) {
+            return edge;
+        }
+    }
+    throw edge_exception(from, to);
+}
+
+void graph::set_edge(int from, int to, int data) {
+    for (edge& edge : adj[from].neighbours) {
+        if (edge.to == to) {
+            edge.data = data;
+        }
+    }
+    throw edge_exception(from, to);
+}
+
+}

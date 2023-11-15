@@ -1,21 +1,29 @@
+#include "graph.hpp"
 #include <iostream>
-#include "graph.h"
 
 int main() {
     std::cout << "Hello there" << std::endl;
-    std::vector<int> vectorData = { 0, 1, 2 };
-    std::vector<int> edgeData = { NULL, NULL, NULL };
-    std::vector<std::pair<int, int>> edges = { { 0, 1 }, {1, 2} };
+    graph::graph g = graph::graph();
+    g.add_vert(0, 10);
+    g.add_vert(1, 20);
+    g.add_vert(2, 30);
+    g.add_edge(0, 1, 30);
+    g.add_edge(1, 2, 50);
 
-    graph::MatrixGraph<int, int> mg(vectorData, edgeData, edges);
+    for (int i = 0; i < 3; i++) {
+        const auto& neighbours = g.neighbours(i);
+        std::cout << "VERTEX" << i << ": ";
+        for (const auto& edge : neighbours) {
+            std::cout << "{" << edge.to << ", " << edge.data << "}, ";
+        }
+        std::cout << std::endl;
+    }
+
     std::cout << "Matrix Graph" << std::endl;
-    std::cout << "(0, 1): " << mg.isNeighbour(0, 1) << std::endl;
-    std::cout << "(1, 2): " << mg.isNeighbour(1, 2) << std::endl;
-    std::cout << "(0, 2): " << mg.isNeighbour(0, 2) << std::endl;
-
-    graph::ListGraph<int, int> lg(vectorData, edgeData, edges);
-    std::cout << "(0, 1): " << lg.isNeighbour(0, 1) << std::endl;
-    std::cout << "(1, 2): " << lg.isNeighbour(1, 2) << std::endl;
-    std::cout << "(0, 2): " << lg.isNeighbour(0, 2) << std::endl;
-    return 0;
+    std::cout << "(0, 1): " << g.is_adjacent(0, 1) << std::endl;
+    std::cout << "(1, 2): " << g.is_adjacent(1, 2) << std::endl;
+    std::cout << "(0, 2): " << g.is_adjacent(0, 2) << std::endl;
+    std::cout << "(1, 0): " << g.is_adjacent(1, 0) << std::endl;
+    std::cout << "(2, 1): " << g.is_adjacent(2, 1) << std::endl;
+    std::cout << "(2, 0): " << g.is_adjacent(2, 0) << std::endl;
 }

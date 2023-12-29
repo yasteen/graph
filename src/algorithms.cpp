@@ -5,34 +5,34 @@
 
 namespace graph {
 
-// Map from vertex id -> (distance, previous vertex id)
-using dijkstra_result = std::unordered_map<int, std::pair<int, std::optional<int>>>;
 dijkstra_result dijkstra(graph g, int source) {
     // Pair (distance, vertex id)
     using pq_entry = std::pair<int, int>;
-    dijkstra_result m;
+    dijkstra_result result;
     std::priority_queue<pq_entry, std::vector<pq_entry>, std::greater<pq_entry>> q;
 
     // Initialize infinite distance for each vertex, and shove into priority queue
     for (const auto& [v, _] : g) {
-        m[v] = { std::numeric_limits<int>::max(), std::nullopt };
-        q.emplace(pq_entry(m[v].first, v));
+        result[v] = { std::numeric_limits<int>::max(), std::nullopt };
     }
-    m[source].first = 0;
+    result[source].first = 0;
+    q.emplace(pq_entry(result[source].first, source));
 
     while (!q.empty()) {
-        const auto & [dist, u] =  q.top();
+        const auto& [dist, u] = q.top();
+        q.pop();
 
-        for (const edge & e : g.neighbours(u)) {
+        for (const edge& e : g.neighbours(u)) {
             int alt = dist + g.get_edge(u, e.to).data;
-            if (alt < m[e.to].first) {
-                m[e.to].first = alt;
-                m[e.to].second = u;
-                q.pop();
+            if (alt < result[e.to].first) {
+                result[e.to].first = alt;
+                result[e.to].second = u;
+                q.emplace(pq_entry(alt, e.to));
             }
         }
     }
 
-    return m;
-    }
+    return result;
+}
+
 }

@@ -2,7 +2,12 @@
 #
 # Get build directory
 cd "$(dirname "$0")"
-BUILD_DIR="$(pwd)/build"
+SRC_DIR="$(pwd)"
+BLD_DIR="$SRC_DIR/build"
 
-echo "cmake -B$BUILD_DIR"
-cmake "-B$BUILD_DIR"
+echo "cmake -B$BLD_DIR"
+cmake "-B$BLD_DIR"
+
+if [ ! -f "$BLD_DIR/compile_commands.json" ]; then
+    ln -s "$BLD_DIR/compile_commands.json" "$SRC_DIR"
+fi

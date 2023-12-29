@@ -17,3 +17,4 @@ PRIVATE
     GTest::GTest
     graph)
 
+add_test(dijkstra_gtest dijkstra_test)

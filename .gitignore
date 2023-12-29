@@ -48,6 +48,7 @@ _deps
 main
 build
 todo.txt
+clean.sh
 
 # clangd
 .cache

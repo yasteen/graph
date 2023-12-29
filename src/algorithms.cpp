@@ -1,4 +1,4 @@
-#include "algorithms.hpp"
+#include <graph/algorithms.hpp>
 #include <limits>
 #include <optional>
 #include <queue>
@@ -13,11 +13,11 @@ dijkstra_result dijkstra(graph g, int source) {
     dijkstra_result m;
     std::priority_queue<pq_entry, std::vector<pq_entry>, std::greater<pq_entry>> q;
 
+    // Initialize infinite distance for each vertex, and shove into priority queue
     for (const auto& [v, _] : g) {
         m[v] = { std::numeric_limits<int>::max(), std::nullopt };
-        q.emplace(std::pair(m[v], v));
+        q.emplace(pq_entry(m[v].first, v));
     }
-
     m[source].first = 0;
 
     while (!q.empty()) {

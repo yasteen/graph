@@ -1,5 +1,5 @@
-#include "graph.hpp"
-#include "exception.hpp"
+#include <graph/graph.hpp>
+#include <graph/exception.hpp>
 #include <iostream>
 
 namespace graph {

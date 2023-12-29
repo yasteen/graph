@@ -47,3 +47,7 @@ _deps
 # Custom
 main
 build
+todo.txt
+
+# clangd
+.cache
